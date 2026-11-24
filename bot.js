@@ -1,7 +1,5 @@
 /**
- * Minecraft 24/7 AFK Bot
- * Author: Kanha
- * Anti-AFK movement + auto-reconnect + random chat
+ * Minecraft 24/7 AFK Bot (Auto-Version Detect)
  */
 
 const mineflayer = require('mineflayer');
@@ -44,7 +42,7 @@ function createBot() {
       username: config.username,
       password: config.password || undefined,
       auth: config.auth || 'offline',
-      version: config.version || false,
+      version: false, // Yahan auto-detect force kiya hai
       hideErrors: false,
       closeTimeout: 60000,
       checkTimeoutInterval: 60000
@@ -58,6 +56,7 @@ function createBot() {
   // ── Spawn ──
   bot.once('spawn', () => {
     log('✅ Bot spawned in server!');
+    log(`ℹ️ Detected server version: ${bot.version}`);
     setTimeout(() => {
       startAntiAFK();
       startRandomChat();
@@ -92,17 +91,8 @@ function createBot() {
     bot.on('chat', (username, message) => {
       if (username === bot.username) return;
       log(`💬 [Chat] ${username}: ${message}`);
-
-      if (config.autoChatReply && message.toLowerCase().includes(config.chatReplyTrigger)) {
-        bot.chat(`${username}, ${config.chatReplyMessage}`);
-      }
     });
   }
-
-  // ── Login ──
-  bot.on('login', () => {
-    log('🔑 Logged in.');
-  });
 }
 
 // ── Reconnect ──
@@ -169,10 +159,7 @@ function startRandomChat() {
   stopRandomChat();
 
   if (!config.randomChatEnabled) return;
-  if (!config.chatMessages || config.chatMessages.length === 0) {
-    log('⚠️  Random chat enabled but no messages configured.');
-    return;
-  }
+  if (!config.chatMessages || config.chatMessages.length === 0) return;
 
   const min = config.randomChatIntervalMin || 80000;
   const max = config.randomChatIntervalMax || 90000;
@@ -195,7 +182,7 @@ function startRandomChat() {
 
   const firstDelay = min + Math.random() * (max - min);
   chatTimer = setTimeout(loop, firstDelay);
-  log(`🚀 Random chat started (interval ${min / 1000}-${max / 1000}s).`);
+  log(`🚀 Random chat started (${min / 1000}-${max / 1000}s).`);
 }
 
 function stopRandomChat() {
@@ -205,7 +192,7 @@ function stopRandomChat() {
   }
 }
 
-// ── Health server (for Railway to keep container alive) ──
+// ── Health server (Railway ke liye) ──
 const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -231,7 +218,6 @@ process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 process.on('uncaughtException', (err) => {
   log('💥 Uncaught exception: ' + err.message);
-  log(err.stack);
 });
 process.on('unhandledRejection', (reason) => {
   log('💥 Unhandled rejection: ' + reason);
@@ -239,10 +225,8 @@ process.on('unhandledRejection', (reason) => {
 
 // ── Start ──
 log('═══════════════════════════════════════');
-log('  Minecraft 24/7 AFK Bot');
+log('  Minecraft 24/7 AFK Bot (Auto-Detect)');
 log('  Host: ' + config.host + ':' + config.port);
 log('  User: ' + config.username);
-log('  Auth: ' + config.auth);
-log('  Random Chat: ' + (config.randomChatEnabled ? 'ON' : 'OFF'));
 log('═══════════════════════════════════════');
 createBot();
