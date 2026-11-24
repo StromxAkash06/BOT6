@@ -1,10 +1,10 @@
 {
-  "host": "delhi-871920.indernos.in",
+  "host": "Javawarriors.mcsh.gg",
   "port": 25565,
-  "username": "AFK_Bot",
+  "username": "afk_bot",
   "password": "",
   "auth": "offline",
-  "version": "1.20.1",
+  "version": "26.2",
   "reconnectDelay": 10000,
   "spawnWarmup": 5000,
   "moveIntervalMin": 5000,
