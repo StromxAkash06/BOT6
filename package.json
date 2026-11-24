@@ -1,7 +1,7 @@
 {
   "name": "mc-afk-bot",
   "version": "1.0.0",
-  "description": "24/7 Minecraft AFK bot with random chat",
+  "description": "24/7 Minecraft AFK bot with auto-version detect",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
@@ -11,7 +11,5 @@
   },
   "dependencies": {
     "mineflayer": "^4.20.0"
-  },
-  "author": "Kanha",
-  "license": "MIT"
+  }
 }
