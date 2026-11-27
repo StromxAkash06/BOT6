@@ -4,7 +4,7 @@
   "username": "AFK_Bot",
   "auth": "offline",
   "version": "1.21.1",
-  "authPassword": "Tera_Secure_Password_123",
+  "authPassword": "botkapassword",
   "reconnectDelay": 10000,
   "spawnWarmup": 5000,
   "moveIntervalMin": 5000,
