@@ -2,9 +2,9 @@
   "host": "Javawarriors.mcsh.gg",
   "port": 25565,
   "username": "AFK_Bot",
-  "password": "",
   "auth": "offline",
-  "version": false,
+  "version": "1.21.1",
+  "authPassword": "Tera_Secure_Password_123",
   "reconnectDelay": 10000,
   "spawnWarmup": 5000,
   "moveIntervalMin": 5000,
@@ -23,6 +23,8 @@
     "hello everyone",
     "whats up",
     "yo",
-    "lets go"
+    "lets go",
+    "noice",
+    "xd"
   ]
 }
