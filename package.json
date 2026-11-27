@@ -1,7 +1,7 @@
 {
   "name": "mc-afk-bot",
   "version": "1.0.0",
-  "description": "24/7 Minecraft AFK bot with auto-version detect",
+  "description": "24/7 Minecraft AFK bot with AuthMe auto-login",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
