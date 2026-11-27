@@ -1,5 +1,5 @@
 /**
- * Minecraft 24/7 AFK Bot (Auto-Version Detect)
+ * Minecraft 24/7 AFK Bot (AuthMe + Anti-AFK + Random Chat)
  */
 
 const mineflayer = require('mineflayer');
@@ -22,6 +22,7 @@ let reconnectTimer = null;
 let moveTimer = null;
 let chatTimer = null;
 let isShuttingDown = false;
+let authCompleted = false;
 
 // ── Logging helper ──
 function log(msg) {
@@ -33,6 +34,7 @@ function log(msg) {
 function createBot() {
   if (isShuttingDown) return;
 
+  authCompleted = false;
   log('🔌 Connecting to ' + config.host + ':' + config.port + ' as ' + config.username + '...');
 
   try {
@@ -42,7 +44,7 @@ function createBot() {
       username: config.username,
       password: config.password || undefined,
       auth: config.auth || 'offline',
-      version: false, // Yahan auto-detect force kiya hai
+      version: config.version || false,
       hideErrors: false,
       closeTimeout: 60000,
       checkTimeoutInterval: 60000
@@ -53,10 +55,40 @@ function createBot() {
     return;
   }
 
+  // ── Auto-Login / Register (AuthMeReloaded) ──
+  bot.on('messagestr', (message) => {
+    if (authCompleted) return;
+    const msgText = message.toLowerCase();
+    const password = config.authPassword;
+
+    if (!password) {
+      log('⚠️ AuthMe detected, but no authPassword in config!');
+      return;
+    }
+
+    if (msgText.includes('/register') || msgText.includes('please register')) {
+      log('🔐 Detected AuthMe register prompt → sending /register');
+      setTimeout(() => {
+        bot.chat(`/register ${password} ${password}`);
+        authCompleted = true;
+        log('✅ Register command sent!');
+      }, 1500); // 1.5s delay for safety
+    } else if (msgText.includes('/login') || msgText.includes('please login')) {
+      log('🔐 Detected AuthMe login prompt → sending /login');
+      setTimeout(() => {
+        bot.chat(`/login ${password}`);
+        authCompleted = true;
+        log('✅ Login command sent!');
+      }, 1500);
+    }
+  });
+
   // ── Spawn ──
   bot.once('spawn', () => {
     log('✅ Bot spawned in server!');
     log(`ℹ️ Detected server version: ${bot.version}`);
+    
+    // Spawn ke baad thoda wait karo taaki AuthMe process ho sake
     setTimeout(() => {
       startAntiAFK();
       startRandomChat();
@@ -86,7 +118,7 @@ function createBot() {
     scheduleReconnect();
   });
 
-  // ── Chat ──
+  // ── Chat Logging ──
   if (config.chatLogging) {
     bot.on('chat', (username, message) => {
       if (username === bot.username) return;
@@ -225,7 +257,7 @@ process.on('unhandledRejection', (reason) => {
 
 // ── Start ──
 log('═══════════════════════════════════════');
-log('  Minecraft 24/7 AFK Bot (Auto-Detect)');
+log('  Minecraft 24/7 AFK Bot (AuthMe Auto)');
 log('  Host: ' + config.host + ':' + config.port);
 log('  User: ' + config.username);
 log('═══════════════════════════════════════');
